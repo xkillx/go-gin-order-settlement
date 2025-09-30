@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -38,6 +39,16 @@ func SetUpDatabaseConnection() *gorm.DB {
 		panic(err)
 	}
 
+	// Tune connection pool to handle concurrency safely and avoid exhausting Postgres max_connections
+	sqlDB, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	sqlDB.SetMaxOpenConns(50)
+	sqlDB.SetMaxIdleConns(50)
+	sqlDB.SetConnMaxLifetime(5 * time.Minute)
+	sqlDB.SetConnMaxIdleTime(5 * time.Minute)
+
 	RunExtension(db)
 
 	return db
@@ -59,6 +70,16 @@ func SetUpTestDatabaseConnection() *gorm.DB {
 	if err != nil {
 		panic(err)
 	}
+
+	// Limit pool size during tests to ensure requests queue instead of failing with connection errors
+	sqlDB, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	sqlDB.SetMaxOpenConns(50)
+	sqlDB.SetMaxIdleConns(50)
+	sqlDB.SetConnMaxLifetime(5 * time.Minute)
+	sqlDB.SetConnMaxIdleTime(5 * time.Minute)
 
 	RunExtension(db)
 
