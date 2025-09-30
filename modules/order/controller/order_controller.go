@@ -1,15 +1,16 @@
 package controller
 
 import (
-	"net/http"
+    "net/http"
+    "errors"
 
-	"github.com/Caknoooo/go-gin-clean-starter/modules/order/dto"
-	"github.com/Caknoooo/go-gin-clean-starter/modules/order/service"
-	"github.com/Caknoooo/go-gin-clean-starter/modules/order/validation"
-	pkgdto "github.com/Caknoooo/go-gin-clean-starter/pkg/dto"
-	"github.com/Caknoooo/go-gin-clean-starter/pkg/utils"
-	"github.com/gin-gonic/gin"
-	"github.com/samber/do"
+    "github.com/Caknoooo/go-gin-clean-starter/modules/order/dto"
+    "github.com/Caknoooo/go-gin-clean-starter/modules/order/service"
+    "github.com/Caknoooo/go-gin-clean-starter/modules/order/validation"
+    pkgdto "github.com/Caknoooo/go-gin-clean-starter/pkg/dto"
+    "github.com/Caknoooo/go-gin-clean-starter/pkg/utils"
+    "github.com/gin-gonic/gin"
+    "github.com/samber/do"
 )
 
 type (
@@ -49,13 +50,19 @@ func (c *orderController) Create(ctx *gin.Context) {
 
 	result, err := c.service.Create(ctx.Request.Context(), req)
 	if err != nil {
+		// Conflict when insufficient stock
+		if errors.Is(err, dto.ErrInsufficientStock) {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_ORDER, err.Error(), nil)
+			ctx.JSON(http.StatusConflict, res)
+			return
+		}
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_ORDER, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_CREATE_ORDER, result)
-	ctx.JSON(http.StatusOK, res)
+	ctx.JSON(http.StatusCreated, res)
 }
 
 func (c *orderController) GetByID(ctx *gin.Context) {

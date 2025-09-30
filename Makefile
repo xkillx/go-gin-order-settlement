@@ -1,7 +1,10 @@
 # Import .env file
-ifneq (,$(wildcard ./.env))
-		include .env
-		export $(shell sed 's/=.*//' .env)
+ifeq (,$(wildcard ./.env))
+$(info ⚠️  No .env file found. Using environment variables or defaults.)
+else
+$(info 🔧 Loading .env file...)
+include .env
+export $(shell sed 's/=.*//' .env)
 endif
 
 # Variables
@@ -29,6 +32,9 @@ test-auth:
 
 test-user:
 	go test -v ./modules/user/tests/...
+
+test-order:
+	go test -v ./modules/order/tests/...
 
 test-all:
 	go test -v ./modules/.../tests/...
