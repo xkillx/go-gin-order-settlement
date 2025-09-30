@@ -5,10 +5,8 @@ import (
     "os"
 
     "github.com/Caknoooo/go-gin-clean-starter/middlewares"
-    "github.com/Caknoooo/go-gin-clean-starter/modules/auth"
     "github.com/Caknoooo/go-gin-clean-starter/modules/order"
     "github.com/Caknoooo/go-gin-clean-starter/modules/product"
-    "github.com/Caknoooo/go-gin-clean-starter/modules/user"
     "github.com/Caknoooo/go-gin-clean-starter/providers"
     "github.com/Caknoooo/go-gin-clean-starter/script"
     "github.com/samber/do"
@@ -64,8 +62,6 @@ func main() {
     server.Use(middlewares.CORSMiddleware())
 
     // Register module routes
-    user.RegisterRoutes(server, injector)
-    auth.RegisterRoutes(server, injector)
     product.RegisterRoutes(server, injector)
     order.RegisterRoutes(server, injector)
 
