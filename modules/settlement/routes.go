@@ -133,7 +133,4 @@ func RegisterRoutes(server *gin.Engine, injector *do.Injector) {
 		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filepath.Base(fullPath)))
 		c.File(fullPath)
 	})
-
-	// Static mapping also allows direct access to /downloads/<job_id>.csv
-	server.Static("/downloads", "/tmp/settlements")
 }

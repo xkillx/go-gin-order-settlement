@@ -30,6 +30,9 @@ test:
 test-order:
 	go test -v ./modules/order/tests/...
 
+test-settlement:
+	go test -v ./modules/settlement/tests/...
+
 test-all:
 	go test -v ./modules/.../tests/...
 

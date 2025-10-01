@@ -273,52 +273,68 @@ func (m *JobManager) runSettlementJob(parentCtx context.Context, jobID string, f
     for {
         select {
         case <-jobCtx.Done():
-            // Try to mark cancelled and return
+            // Mark cancelled and return immediately
             _ = m.jobRepo.SetStatus(context.Background(), jobID, jobStatusCancelled)
             _ = m.jobRepo.SetResultPath(context.Background(), jobID, outPath)
             return
         case err := <-producerErr:
             if err != nil {
+                // If we were cancelled, treat producer error as part of cancellation
+                if jobCtx.Err() != nil {
+                    _ = m.jobRepo.SetStatus(context.Background(), jobID, jobStatusCancelled)
+                    _ = m.jobRepo.SetResultPath(context.Background(), jobID, outPath)
+                    return
+                }
                 m.fail(jobCtx, jobID, fmt.Errorf("producer: %w", err))
                 return
             }
-        default:
-        }
-
-        pr, ok := <-resultChan
-        if !ok {
-            // final flush
-            if err := flush(true); err != nil {
-                m.fail(jobCtx, jobID, fmt.Errorf("final flush: %w", err))
+            // no error from producer, continue
+        case pr, ok := <-resultChan:
+            if !ok {
+                // If cancelled, do not flush or mark completed
+                if jobCtx.Err() != nil {
+                    _ = m.jobRepo.SetResultPath(context.Background(), jobID, outPath)
+                    _ = m.jobRepo.SetStatus(context.Background(), jobID, jobStatusCancelled)
+                    return
+                }
+                // final flush and successful completion
+                if err := flush(true); err != nil {
+                    m.fail(jobCtx, jobID, fmt.Errorf("final flush: %w", err))
+                    return
+                }
+                _ = m.jobRepo.UpdateProgress(jobCtx, jobID, total, total, 100)
+                _ = m.jobRepo.SetResultPath(jobCtx, jobID, outPath)
+                _ = m.jobRepo.SetStatus(jobCtx, jobID, jobStatusCompleted)
                 return
             }
-            // success
-            _ = m.jobRepo.UpdateProgress(jobCtx, jobID, total, total, 100)
-            _ = m.jobRepo.SetResultPath(jobCtx, jobID, outPath)
-            _ = m.jobRepo.SetStatus(jobCtx, jobID, jobStatusCompleted)
-            return
-        }
-
-        // Merge partial
-        for k, v := range pr.agg {
-            if cur, ok := global[k]; ok {
-                cur.GrossCents += v.GrossCents
-                cur.FeeCents += v.FeeCents
-                cur.NetCents += v.NetCents
-                cur.TxnCount += v.TxnCount
-                global[k] = cur
-            } else {
-                vv := v // create local copy
-                global[k] = &vv
-            }
-            changed[k] = struct{}{}
-        }
-        processed += int64(pr.count)
-        batchesSinceFlush++
-        if batchesSinceFlush >= flushEveryBatches {
-            if err := flush(false); err != nil {
-                m.fail(jobCtx, jobID, fmt.Errorf("flush: %w", err))
+            // If cancelled, stop processing incoming results to avoid marking FAILED due to context cancellation during flush
+            if jobCtx.Err() != nil {
+                _ = m.jobRepo.SetResultPath(context.Background(), jobID, outPath)
+                _ = m.jobRepo.SetStatus(context.Background(), jobID, jobStatusCancelled)
                 return
+            }
+
+            // Merge partial
+            for k, v := range pr.agg {
+                if cur, ok := global[k]; ok {
+                    cur.GrossCents += v.GrossCents
+                    cur.FeeCents += v.FeeCents
+                    cur.NetCents += v.NetCents
+                    cur.TxnCount += v.TxnCount
+                    global[k] = cur
+                } else {
+                    vv := v // create local copy
+                    global[k] = &vv
+                }
+                changed[k] = struct{}{}
+            }
+            processed += int64(pr.count)
+            batchesSinceFlush++
+            if batchesSinceFlush >= flushEveryBatches {
+                if err := flush(false); err != nil {
+                    m.fail(jobCtx, jobID, fmt.Errorf("flush: %w", err))
+                    return
+                }
             }
         }
     }
