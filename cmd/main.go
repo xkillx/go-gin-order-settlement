@@ -7,6 +7,7 @@ import (
     "github.com/xkillx/go-gin-order-settlement/middlewares"
     "github.com/xkillx/go-gin-order-settlement/modules/order"
     "github.com/xkillx/go-gin-order-settlement/modules/product"
+    "github.com/xkillx/go-gin-order-settlement/modules/settlement"
     "github.com/xkillx/go-gin-order-settlement/providers"
     "github.com/xkillx/go-gin-order-settlement/script"
     "github.com/samber/do"
@@ -64,6 +65,7 @@ func main() {
     // Register module routes
     product.RegisterRoutes(server, injector)
     order.RegisterRoutes(server, injector)
+    settlement.RegisterRoutes(server, injector)
 
     run(server)
 }
