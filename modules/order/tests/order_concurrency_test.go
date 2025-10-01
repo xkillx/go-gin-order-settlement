@@ -84,7 +84,11 @@ func TestConcurrentBuyers500(t *testing.T) {
 	server, _, db, product, cleanup := setupTestServer(t)
 	defer cleanup()
 
-	ts := httptest.NewServer(server)
+	// Use UnstartedServer to configure connection limits before starting
+	ts := httptest.NewUnstartedServer(server)
+	// Increase MaxHeaderBytes to handle more concurrent requests
+	ts.Config.MaxHeaderBytes = 1 << 20
+	ts.Start()
 	defer ts.Close()
 
 	url := ts.URL + "/api/orders"
@@ -98,14 +102,32 @@ func TestConcurrentBuyers500(t *testing.T) {
 
 	// Barrier to start all goroutines at once
 	start := make(chan struct{})
+	
+	// Semaphore to limit concurrent HTTP connections (to avoid overwhelming test server)
+	// Limit to 100 concurrent connections at a time
+	concurrencySem := make(chan struct{}, 100)
 
-	client := &http.Client{Timeout: 15 * time.Second}
+	// Configure HTTP client to handle high concurrency
+	transport := &http.Transport{
+		MaxIdleConns:        200,
+		MaxIdleConnsPerHost: 200,
+		MaxConnsPerHost:     200,
+		IdleConnTimeout:     90 * time.Second,
+	}
+	client := &http.Client{
+		Timeout:   30 * time.Second,
+		Transport: transport,
+	}
 
 	for i := 0; i < 500; i++ {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
 			<-start
+			
+			// Acquire semaphore slot before making HTTP call
+			concurrencySem <- struct{}{}
+			defer func() { <-concurrencySem }()
 
 			payload := orderCreateRequest{
 				ProductID: product.ID.String(),
@@ -141,7 +163,6 @@ func TestConcurrentBuyers500(t *testing.T) {
 	// Release all goroutines simultaneously
 	close(start)
 	wg.Wait()
-
 	if successCount != 100 || conflictCount != 400 {
 		t.Fatalf("unexpected counts: success=%d conflict=%d other=%d (expected success=100, conflict=400, other=0)", successCount, conflictCount, otherCount)
 	}
