@@ -14,6 +14,7 @@ type JobRepo interface {
     RequestCancel(ctx context.Context, jobID string) error
     IsCancelRequested(ctx context.Context, jobID string) (bool, error)
     Get(ctx context.Context, jobID string) (entities.Job, error)
+    SetStatus(ctx context.Context, jobID, status string) error
 }
 
 type jobRepository struct {
@@ -67,4 +68,10 @@ func (r *jobRepository) Get(ctx context.Context, jobID string) (entities.Job, er
         return entities.Job{}, err
     }
     return j, nil
+}
+
+func (r *jobRepository) SetStatus(ctx context.Context, jobID, status string) error {
+    return r.db.WithContext(ctx).Model(&entities.Job{}).
+        Where("id = ?", jobID).
+        Update("status", status).Error
 }

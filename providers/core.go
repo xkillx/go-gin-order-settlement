@@ -8,6 +8,10 @@ import (
 	productController "github.com/xkillx/go-gin-order-settlement/modules/product/controller"
 	productRepo "github.com/xkillx/go-gin-order-settlement/modules/product/repository"
 	productService "github.com/xkillx/go-gin-order-settlement/modules/product/service"
+	jobRepo "github.com/xkillx/go-gin-order-settlement/modules/job/repository"
+	settlementRepo "github.com/xkillx/go-gin-order-settlement/modules/settlement/repository"
+	settlementService "github.com/xkillx/go-gin-order-settlement/modules/settlement/service"
+	transactionRepo "github.com/xkillx/go-gin-order-settlement/modules/transaction/repository"
 	"github.com/xkillx/go-gin-order-settlement/pkg/constants"
 	"github.com/samber/do"
 	"gorm.io/gorm"
@@ -26,9 +30,19 @@ func RegisterDependencies(injector *do.Injector) {
 
 	productRepository := productRepo.NewProductRepository(db)
 	orderRepository := orderRepo.NewOrderRepository(db)
+	// Settlement job related repos
+	txRepository := transactionRepo.NewTransactionRepository(db)
+	stRepository := settlementRepo.NewSettlementRepository(db)
+	jobRepository := jobRepo.NewJobRepository(db)
 
 	productService := productService.NewProductService(productRepository, db)
 	orderService := orderService.NewOrderService(orderRepository, productRepository, db)
+	// Provide JobManager as a singleton service so controllers can access the same instance for cancellation
+	do.Provide(
+		injector, func(i *do.Injector) (*settlementService.JobManager, error) {
+			return settlementService.NewJobManager(txRepository, stRepository, jobRepository), nil
+		},
+	)
 
 	do.Provide(
 		injector, func(i *do.Injector) (productController.ProductController, error) {
