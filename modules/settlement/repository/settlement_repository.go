@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/Caknoooo/go-gin-clean-starter/database/entities"
+	"github.com/xkillx/go-gin-order-settlement/database/entities"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )

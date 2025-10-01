@@ -1,7 +1,7 @@
 package product
 
 import (
-	"github.com/Caknoooo/go-gin-clean-starter/modules/product/controller"
+	"github.com/xkillx/go-gin-order-settlement/modules/product/controller"
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do"
 )

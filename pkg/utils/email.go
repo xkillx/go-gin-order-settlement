@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/Caknoooo/go-gin-clean-starter/config"
+	"github.com/xkillx/go-gin-order-settlement/config"
 
 	"gopkg.in/gomail.v2"
 )

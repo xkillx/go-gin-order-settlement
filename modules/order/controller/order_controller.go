@@ -4,11 +4,11 @@ import (
     "net/http"
     "errors"
 
-    "github.com/Caknoooo/go-gin-clean-starter/modules/order/dto"
-    "github.com/Caknoooo/go-gin-clean-starter/modules/order/service"
-    "github.com/Caknoooo/go-gin-clean-starter/modules/order/validation"
-    pkgdto "github.com/Caknoooo/go-gin-clean-starter/pkg/dto"
-    "github.com/Caknoooo/go-gin-clean-starter/pkg/utils"
+    "github.com/xkillx/go-gin-order-settlement/modules/order/dto"
+    "github.com/xkillx/go-gin-order-settlement/modules/order/service"
+    "github.com/xkillx/go-gin-order-settlement/modules/order/validation"
+    pkgdto "github.com/xkillx/go-gin-order-settlement/pkg/dto"
+    "github.com/xkillx/go-gin-order-settlement/pkg/utils"
     "github.com/gin-gonic/gin"
     "github.com/samber/do"
 )

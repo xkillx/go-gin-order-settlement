@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 
-	"github.com/Caknoooo/go-gin-clean-starter/database/entities"
-	"github.com/Caknoooo/go-gin-clean-starter/modules/product/dto"
-	"github.com/Caknoooo/go-gin-clean-starter/modules/product/repository"
-	pkgdto "github.com/Caknoooo/go-gin-clean-starter/pkg/dto"
+	"github.com/xkillx/go-gin-order-settlement/database/entities"
+	"github.com/xkillx/go-gin-order-settlement/modules/product/dto"
+	"github.com/xkillx/go-gin-order-settlement/modules/product/repository"
+	pkgdto "github.com/xkillx/go-gin-order-settlement/pkg/dto"
 	"gorm.io/gorm"
 )
 

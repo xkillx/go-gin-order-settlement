@@ -1,7 +1,7 @@
 package order
 
 import (
-	"github.com/Caknoooo/go-gin-clean-starter/modules/order/controller"
+	"github.com/xkillx/go-gin-order-settlement/modules/order/controller"
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do"
 )

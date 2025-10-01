@@ -1,14 +1,14 @@
 package providers
 
 import (
-	"github.com/Caknoooo/go-gin-clean-starter/config"
-	orderController "github.com/Caknoooo/go-gin-clean-starter/modules/order/controller"
-	orderRepo "github.com/Caknoooo/go-gin-clean-starter/modules/order/repository"
-	orderService "github.com/Caknoooo/go-gin-clean-starter/modules/order/service"
-	productController "github.com/Caknoooo/go-gin-clean-starter/modules/product/controller"
-	productRepo "github.com/Caknoooo/go-gin-clean-starter/modules/product/repository"
-	productService "github.com/Caknoooo/go-gin-clean-starter/modules/product/service"
-	"github.com/Caknoooo/go-gin-clean-starter/pkg/constants"
+	"github.com/xkillx/go-gin-order-settlement/config"
+	orderController "github.com/xkillx/go-gin-order-settlement/modules/order/controller"
+	orderRepo "github.com/xkillx/go-gin-order-settlement/modules/order/repository"
+	orderService "github.com/xkillx/go-gin-order-settlement/modules/order/service"
+	productController "github.com/xkillx/go-gin-order-settlement/modules/product/controller"
+	productRepo "github.com/xkillx/go-gin-order-settlement/modules/product/repository"
+	productService "github.com/xkillx/go-gin-order-settlement/modules/product/service"
+	"github.com/xkillx/go-gin-order-settlement/pkg/constants"
 	"github.com/samber/do"
 	"gorm.io/gorm"
 )

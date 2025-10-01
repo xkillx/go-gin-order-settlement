@@ -4,11 +4,11 @@ import (
     "log"
     "os"
 
-    "github.com/Caknoooo/go-gin-clean-starter/middlewares"
-    "github.com/Caknoooo/go-gin-clean-starter/modules/order"
-    "github.com/Caknoooo/go-gin-clean-starter/modules/product"
-    "github.com/Caknoooo/go-gin-clean-starter/providers"
-    "github.com/Caknoooo/go-gin-clean-starter/script"
+    "github.com/xkillx/go-gin-order-settlement/middlewares"
+    "github.com/xkillx/go-gin-order-settlement/modules/order"
+    "github.com/xkillx/go-gin-order-settlement/modules/product"
+    "github.com/xkillx/go-gin-order-settlement/providers"
+    "github.com/xkillx/go-gin-order-settlement/script"
     "github.com/samber/do"
 
 	"github.com/common-nighthawk/go-figure"

@@ -3,11 +3,11 @@ package controller
 import (
 	"net/http"
 
-	"github.com/Caknoooo/go-gin-clean-starter/modules/product/dto"
-	"github.com/Caknoooo/go-gin-clean-starter/modules/product/service"
-	"github.com/Caknoooo/go-gin-clean-starter/modules/product/validation"
-	pkgdto "github.com/Caknoooo/go-gin-clean-starter/pkg/dto"
-	"github.com/Caknoooo/go-gin-clean-starter/pkg/utils"
+	"github.com/xkillx/go-gin-order-settlement/modules/product/dto"
+	"github.com/xkillx/go-gin-order-settlement/modules/product/service"
+	"github.com/xkillx/go-gin-order-settlement/modules/product/validation"
+	pkgdto "github.com/xkillx/go-gin-order-settlement/pkg/dto"
+	"github.com/xkillx/go-gin-order-settlement/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do"
 )

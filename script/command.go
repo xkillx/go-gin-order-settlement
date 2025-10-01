@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Caknoooo/go-gin-clean-starter/database"
-	"github.com/Caknoooo/go-gin-clean-starter/pkg/constants"
+	"github.com/xkillx/go-gin-order-settlement/database"
+	"github.com/xkillx/go-gin-order-settlement/pkg/constants"
 	"github.com/samber/do"
 	"gorm.io/gorm"
 )

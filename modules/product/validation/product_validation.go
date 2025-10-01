@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"github.com/Caknoooo/go-gin-clean-starter/modules/product/dto"
+	"github.com/xkillx/go-gin-order-settlement/modules/product/dto"
 	"github.com/go-playground/validator/v10"
 )
 
